@@ -4,6 +4,17 @@ var React = require('react');
 // This is the results component
 var Results = React.createClass({
 
+	getInitialState: function(){
+		return {
+			//food: 6
+		}
+	},
+
+	handleClick: function(){
+		this.props.postHistory(this.state.headline);
+	},
+
+
 	// Here we render the function
 	render: function(){
 
@@ -11,12 +22,18 @@ var Results = React.createClass({
 
 			<div className="panel panel-default">
 				<div className="panel-heading">
-					<h3 className="panel-title text-center">Results</h3>
+					<h3 className="panel-title text-center">Top 5 Results</h3>
 				</div>
 				<div className="panel-body text-center">
 
-						<h1>Address:</h1>
-						<p>{this.props.address}</p>
+					
+					{/* Here we use a map function to loop through an array in JSX*/}
+					{this.props.results.map(function(search, i)
+						{
+							return <tr><td key={i}>{search.headline}</td><td><button onClick={this.handleClick}>Save</button></td></tr> 
+						}
+					)}
+					
 
 				</div>
 			</div>

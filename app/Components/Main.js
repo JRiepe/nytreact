@@ -39,7 +39,7 @@ var Main = React.createClass({
 				.then(function(data){
 					if (data != this.state.results)
 					{
-						console.log("Address", data);
+						console.log("Headline", data);
 
 						this.setState({
 							results: data
@@ -73,7 +73,7 @@ var Main = React.createClass({
 	// The moment the page renders get the History
 	componentDidMount: function(){
 
-		// Get the latest history.
+		// Get saved articles
 		helpers.getHistory()
 			.then(function(response){
 				if (response != this.state.history){
@@ -96,30 +96,30 @@ var Main = React.createClass({
 				<div className="row">
 
 					<div className="jumbotron">
-						<h2 className="text-center">Address Finder!</h2>
-						<p className="text-center"><em>Enter a landmark to search for its exact address (ex: "Eiffel Tower").</em></p>
+						<h2 className="text-center">Article Finder!</h2>
+						<p className="text-center"><em>Search the New York Times Database.</em></p>
 					</div>
 
-					<div className="col-md-6">
+					<div className="col-md-12">
 					
 						<Form setTerm={this.setTerm}/>
 
 					</div>
 
-					<div className="col-md-6">
+					<div className="col-md-12">
 				
-						<Results address={this.state.results} />
+						<Results headline={this.state.results} />
 
 					</div>
 
+				
+
+					<div className="col-md-12">
+
+						<History history={this.state.history}/> 
+
+					</div>
 				</div>
-
-				<div className="row">
-
-					<History history={this.state.history}/> 
-
-				</div>
-
 			</div>
 		)
 	}

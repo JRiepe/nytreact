@@ -1,25 +1,47 @@
 // Include the axios package for performing HTTP requests (promise based alternative to request)
 var axios = require('axios');
 
-// Geocoder API
-var geocodeAPI = "35e5548c618555b1a43eb4759d26b260";
+
+///////////////////////////////////////////////////////////////////////
+// NYT information
+
+var authKey = "b865d6e6c727411ea54bb427804c92f9"
+
+// Search Parameters Set variables to store your queryTerm, Number of results, Start year and End Year
 
 // Helper Functions (in this case the only one is runQuery)
 var helpers = {
 
 	// This function serves our purpose of running the query to geolocate. 
-	runQuery: function(location){
+	runQuery: function(searchTerm, beginYear, endYear){
 
-		console.log(location);
+			console.log(searchTerm, beginYear, endYear);
 
-		//Figure out the geolocation
-		var queryURL = "http://api.opencagedata.com/geocode/v1/json?query=" + location + "&pretty=1&key=" + geocodeAPI;
+			// Query NY Times
+			var queryURL = "http://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=" + authKey + "&q=" + searchTerm + "&limit=5";
+			if (parseInt(beginYear)) {
 
-		return axios.get(queryURL)
+			// Add the necessary fields
+				beginYear = beginYear + "0101";
+
+				queryURL = queryURL + "&begin_date=" + beginYear// Add the date information to the newly created URL variable
+			
+			} // end if
+
+			if(parseInt(endYear)){
+
+				// Add the necessary fields
+				endYear = endYear + "1231";
+				
+				// Add the date information to the newly created URL variable
+				queryURL = queryURL + "&end_date=" + endYear;
+			} // end if
+
+			return axios.get(queryURL)
 			.then(function(response){
 
 				console.log(response);
-				return response.data.results[0].formatted;
+				return response.docs;
 		})
 
 	},
@@ -36,9 +58,19 @@ var helpers = {
 	},
 
 	// This function posts new searches to our database.
-	postHistory: function(location){
+	postHistory: function(headline){
 
-		return axios.post('/api', {location: location})
+		return axios.post('/api', {headline: headline})
+			.then(function(results){
+
+				console.log("Posted to MongoDB");
+				return(results);
+			})
+	},
+
+	deleteHistory: function(headline){
+
+		return axios.delete('/api', {headline: headline})
 			.then(function(results){
 
 				console.log("Posted to MongoDB");
