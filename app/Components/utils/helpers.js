@@ -40,16 +40,16 @@ var helpers = {
 			return axios.get(queryURL)
 			.then(function(response){
 
-				console.log(response);
-				return response.docs;
+				console.log(response.data.response.docs);
+				return response.data.response.docs;
 		})
 
 	},
 
 	// This function hits our own server to retrieve the record of query results
-	getHistory: function(){
+	getSaved: function(){
 
-		return axios.get('/api')
+		return axios.get('/api/saved')
 			.then(function(response){
 
 				console.log(response);
@@ -58,9 +58,9 @@ var helpers = {
 	},
 
 	// This function posts new searches to our database.
-	postHistory: function(headline){
+	postSaved: function(headline){
 
-		return axios.post('/api', {headline: headline})
+		return axios.post('/api/saved', {headline: headline})
 			.then(function(results){
 
 				console.log("Posted to MongoDB");
@@ -68,9 +68,9 @@ var helpers = {
 			})
 	},
 
-	deleteHistory: function(headline){
+	deleteSaved: function(headline){
 
-		return axios.delete('/api', {headline: headline})
+		return axios.delete('/api/saved', {headline: headline})
 			.then(function(results){
 
 				console.log("Posted to MongoDB");

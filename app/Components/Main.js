@@ -2,9 +2,9 @@
 var React = require('react');
 
 // Here we include all of the sub-components
-var Form = require('./Children/Form');
+var Search = require('./Children/Search');
 var Results = require('./Children/Results');
-var History = require('./Children/History');
+var Saved = require('./Children/Saved');
 
 // Helper Function
 var helpers = require('./utils/helpers.js');
@@ -17,14 +17,16 @@ var Main = React.createClass({
 		return {
 			searchTerm: "",
 			results: "",
-			history: [] /*Note how we added in this history state variable*/
+			saved: [] /*Note how we added in this history state variable*/
 		}
 	},	
 
 	// This function allows childrens to update the parent.
 	setTerm: function(term){
 		this.setState({
-			searchTerm: term
+			searchTerm: term,
+			beginYear: beginYear,
+			endYear: endYear
 		})
 	},
 
@@ -46,19 +48,19 @@ var Main = React.createClass({
 						})
 
 						// After we've received the result... then post the search term to our history. 
-						helpers.postHistory(this.state.searchTerm)
+						helpers.postSaved(this.state.searchTerm)
 							.then(function(data){
 								console.log("Updated!");
 
 								// After we've done the post... then get the updated history
-								helpers.getHistory()
+								helpers.getSaved()
 									.then(function(response){
-										console.log("Current History", response.data);
-										if (response != this.state.history){
-											console.log ("History", response.data);
+										console.log("Currently Saved", response.data);
+										if (response != this.state.saved){
+											console.log ("Saved", response.data);
 
 											this.setState({
-												history: response.data
+												saved: response.data
 											})
 										}
 									}.bind(this))	
@@ -74,13 +76,13 @@ var Main = React.createClass({
 	componentDidMount: function(){
 
 		// Get saved articles
-		helpers.getHistory()
+		helpers.getSaved()
 			.then(function(response){
-				if (response != this.state.history){
-					console.log ("History", response.data);
+				if (response != this.state.saved){
+					console.log ("Saved", response.data);
 
 					this.setState({
-						history: response.data
+						saved: response.data
 					})
 				}
 			}.bind(this))
@@ -102,13 +104,13 @@ var Main = React.createClass({
 
 					<div className="col-md-12">
 					
-						<Form setTerm={this.setTerm}/>
+						<Search setTerm={this.setTerm}/>
 
 					</div>
 
 					<div className="col-md-12">
 				
-						<Results headline={this.state.results} />
+						<Results results={this.state.data} />
 
 					</div>
 
@@ -116,7 +118,7 @@ var Main = React.createClass({
 
 					<div className="col-md-12">
 
-						<History history={this.state.history}/> 
+						<Saved saved={this.state.saved}/> 
 
 					</div>
 				</div>

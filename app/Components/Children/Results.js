@@ -11,7 +11,7 @@ var Results = React.createClass({
 	},
 
 	handleClick: function(){
-		this.props.postHistory(this.state.headline);
+		this.props.postSaved(this.state.headline);
 	},
 
 
@@ -28,11 +28,11 @@ var Results = React.createClass({
 
 					
 					{/* Here we use a map function to loop through an array in JSX*/}
-					{this.props.results.map(function(search, i)
+					{/*this.props.results.map(function(search, i)
 						{
 							return <tr><td key={i}>{search.headline}</td><td><button onClick={this.handleClick}>Save</button></td></tr> 
 						}
-					)}
+					)*/}
 					
 
 				</div>

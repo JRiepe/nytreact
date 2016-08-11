@@ -19712,9 +19712,9 @@
 	var React = __webpack_require__(1);
 
 	// Here we include all of the sub-components
-	var Form = __webpack_require__(160);
+	var Search = __webpack_require__(160);
 	var Results = __webpack_require__(161);
-	var History = __webpack_require__(162);
+	var Saved = __webpack_require__(162);
 
 	// Helper Function
 	var helpers = __webpack_require__(163);
@@ -19729,14 +19729,16 @@
 			return {
 				searchTerm: "",
 				results: "",
-				history: [] /*Note how we added in this history state variable*/
+				saved: [] /*Note how we added in this history state variable*/
 			};
 		},
 
 		// This function allows childrens to update the parent.
 		setTerm: function setTerm(term) {
 			this.setState({
-				searchTerm: term
+				searchTerm: term,
+				beginYear: beginYear,
+				endYear: endYear
 			});
 		},
 
@@ -19756,17 +19758,17 @@
 						});
 
 						// After we've received the result... then post the search term to our history. 
-						helpers.postHistory(this.state.searchTerm).then(function (data) {
+						helpers.postSaved(this.state.searchTerm).then(function (data) {
 							console.log("Updated!");
 
 							// After we've done the post... then get the updated history
-							helpers.getHistory().then(function (response) {
-								console.log("Current History", response.data);
-								if (response != this.state.history) {
-									console.log("History", response.data);
+							helpers.getSaved().then(function (response) {
+								console.log("Currently Saved", response.data);
+								if (response != this.state.saved) {
+									console.log("Saved", response.data);
 
 									this.setState({
-										history: response.data
+										saved: response.data
 									});
 								}
 							}.bind(this));
@@ -19780,12 +19782,12 @@
 		componentDidMount: function componentDidMount() {
 
 			// Get saved articles
-			helpers.getHistory().then(function (response) {
-				if (response != this.state.history) {
-					console.log("History", response.data);
+			helpers.getSaved().then(function (response) {
+				if (response != this.state.saved) {
+					console.log("Saved", response.data);
 
 					this.setState({
-						history: response.data
+						saved: response.data
 					});
 				}
 			}.bind(this));
@@ -19821,17 +19823,17 @@
 					React.createElement(
 						'div',
 						{ className: 'col-md-12' },
-						React.createElement(Form, { setTerm: this.setTerm })
+						React.createElement(Search, { setTerm: this.setTerm })
 					),
 					React.createElement(
 						'div',
 						{ className: 'col-md-12' },
-						React.createElement(Results, { headline: this.state.results })
+						React.createElement(Results, { results: this.state.data })
 					),
 					React.createElement(
 						'div',
 						{ className: 'col-md-12' },
-						React.createElement(History, { history: this.state.history })
+						React.createElement(Saved, { saved: this.state.saved })
 					)
 				)
 			);
@@ -19851,14 +19853,16 @@
 	var React = __webpack_require__(1);
 
 	// This is the form component. 
-	var Form = React.createClass({
-		displayName: "Form",
+	var Search = React.createClass({
+		displayName: "Search",
 
 
 		// Here we set a generic state associated with the text being searched for
 		getInitialState: function getInitialState() {
 			return {
-				term: ""
+				term: "",
+				beginYear: "",
+				endYear: ""
 			};
 		},
 
@@ -19878,9 +19882,12 @@
 
 			console.log("CLICK");
 			console.log(this.state.term);
-
+			//console.log(this state.beginYear);
+			//console.log(this.state.endYear);
 			// Set the parent to have the search term
-			this.props.setTerm(this.state.term);
+			this.props.setTerm(this.state.term, this.state.beginYear, this.state.endYear);
+
+			runQuery(term, beginYear, endYear);
 		},
 
 		// Here we render the function
@@ -19895,7 +19902,7 @@
 					React.createElement(
 						"h3",
 						{ className: "panel-title text-center" },
-						"Query"
+						"Query the New York Times Database"
 					)
 				),
 				React.createElement(
@@ -19916,7 +19923,36 @@
 									"Enter Search Term(s) Here!"
 								)
 							),
-							React.createElement("input", { type: "text", className: "form-control text-center", id: "term", onChange: this.handleChange, required: true }),
+							React.createElement(
+								"td",
+								null,
+								React.createElement(
+									"label",
+									null,
+									"Search Term:"
+								),
+								React.createElement("input", { type: "text", className: "form-control text-center", id: "term", onChange: this.handleChange, required: true })
+							),
+							React.createElement(
+								"td",
+								null,
+								React.createElement(
+									"label",
+									null,
+									"Beginning Year:"
+								),
+								React.createElement("input", { type: "text", className: "form-control text-center", id: "beginYear", required: true })
+							),
+							React.createElement(
+								"td",
+								null,
+								React.createElement(
+									"label",
+									null,
+									"Ending Year:"
+								),
+								React.createElement("input", { type: "text", className: "form-control text-center", id: "endYear", required: true })
+							),
 							React.createElement("br", null),
 							React.createElement(
 								"button",
@@ -19931,7 +19967,7 @@
 	});
 
 	// Export the component back for use in other files
-	module.exports = Form;
+	module.exports = Search;
 
 /***/ },
 /* 161 */
@@ -19954,7 +19990,7 @@
 		},
 
 		handleClick: function handleClick() {
-			this.props.postHistory(this.state.headline);
+			this.props.postSaved(this.state.headline);
 		},
 
 		// Here we render the function
@@ -19972,30 +20008,7 @@
 						"Top 5 Results"
 					)
 				),
-				React.createElement(
-					"div",
-					{ className: "panel-body text-center" },
-					this.props.results.map(function (search, i) {
-						return React.createElement(
-							"tr",
-							null,
-							React.createElement(
-								"td",
-								{ key: i },
-								search.headline
-							),
-							React.createElement(
-								"td",
-								null,
-								React.createElement(
-									"button",
-									{ onClick: this.handleClick },
-									"Save"
-								)
-							)
-						);
-					})
-				)
+				React.createElement("div", { className: "panel-body text-center" })
 			);
 		}
 	});
@@ -20013,18 +20026,16 @@
 	var React = __webpack_require__(1);
 
 	// This is the history component. It will be used to show a log of  recent searches.
-	var History = React.createClass({
-		displayName: "History",
+	var Saved = React.createClass({
+		displayName: "Saved",
 
 
 		getInitialState: function getInitialState() {
-			return {
-				food: 6
-			};
+			return {};
 		},
 
 		handleClick: function handleClick() {
-			this.props.deleteHistory(this.state.headline);
+			this.props.deleteSaved(this.state.headline);
 		},
 
 		// Here we render the function
@@ -20042,36 +20053,13 @@
 						"Saved Articles"
 					)
 				),
-				React.createElement(
-					"div",
-					{ className: "panel-body text-center" },
-					this.props.history.response.map(function (search, i) {
-						return React.createElement(
-							"tr",
-							null,
-							React.createElement(
-								"td",
-								{ key: i },
-								search.headline
-							),
-							React.createElement(
-								"td",
-								null,
-								React.createElement(
-									"button",
-									{ onClick: this.handleClick },
-									"Remove"
-								)
-							)
-						);
-					})
-				)
+				React.createElement("div", { className: "panel-body text-center" })
 			);
 		}
 	});
 
 	// Export the component back for use in other files
-	module.exports = History;
+	module.exports = Saved;
 
 /***/ },
 /* 163 */
@@ -20118,15 +20106,15 @@
 
 			return axios.get(queryURL).then(function (response) {
 
-				console.log(response);
-				return response.docs;
+				console.log(response.data.response.docs);
+				return response.data.response.docs;
 			});
 		},
 
 		// This function hits our own server to retrieve the record of query results
-		getHistory: function getHistory() {
+		getSaved: function getSaved() {
 
-			return axios.get('/api').then(function (response) {
+			return axios.get('/api/saved').then(function (response) {
 
 				console.log(response);
 				return response;
@@ -20134,18 +20122,18 @@
 		},
 
 		// This function posts new searches to our database.
-		postHistory: function postHistory(headline) {
+		postSaved: function postSaved(headline) {
 
-			return axios.post('/api', { headline: headline }).then(function (results) {
+			return axios.post('/api/saved', { headline: headline }).then(function (results) {
 
 				console.log("Posted to MongoDB");
 				return results;
 			});
 		},
 
-		deleteHistory: function deleteHistory(headline) {
+		deleteSaved: function deleteSaved(headline) {
 
-			return axios.delete('/api', { headline: headline }).then(function (results) {
+			return axios.delete('/api/saved', { headline: headline }).then(function (results) {
 
 				console.log("Posted to MongoDB");
 				return results;
