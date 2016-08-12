@@ -21,7 +21,9 @@ app.use(express.static('./public'));
 
 // MongoDB Configuration configuration (Change this URL to your own DB)
 // var databaseUrl = "mong....."
-var databaseUrl = 'nytreact'//'mongodb:
+
+var databaseUrl = "mongodb://heroku_51q74xmp:2jo7tq1mdesgs20r65o2035mis@ds153745.mlab.com:53745/heroku_51q74xmp"
+//var databaseUrl = 'nytreact'//'mongodb:
 var collections = ["articles"];
 
 // use mongojs to hook the database to the db variable 
