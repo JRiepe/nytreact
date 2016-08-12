@@ -19728,17 +19728,19 @@
 		getInitialState: function getInitialState() {
 			return {
 				searchTerm: "",
+				beginYear: "",
+				endYear: "",
 				results: "",
 				saved: [] /*Note how we added in this history state variable*/
 			};
 		},
 
 		// This function allows childrens to update the parent.
-		setTerm: function setTerm(term) {
+		setTerm: function setTerm(term, b_year, e_year) {
 			this.setState({
 				searchTerm: term,
-				beginYear: beginYear,
-				endYear: endYear
+				beginYear: b_year,
+				endYear: e_year
 			});
 		},
 
@@ -19748,8 +19750,8 @@
 			if (prevState.searchTerm != this.state.searchTerm) {
 				console.log("UPDATED");
 
-				// Run the query for the address
-				helpers.runQuery(this.state.searchTerm).then(function (data) {
+				// Run the query from NY Times
+				helpers.runQuery(this.state.searchTerm, this.state.beginYear, this.state.endYear).then(function (data) {
 					if (data != this.state.results) {
 						console.log("Headline", data);
 
@@ -19757,22 +19759,18 @@
 							results: data
 						});
 
-						// After we've received the result... then post the search term to our history. 
-						helpers.postSaved(this.state.searchTerm).then(function (data) {
-							console.log("Updated!");
+						helpers.getSaved().then(function (response) {
+							console.log("Currently Saved", response.data);
+							if (response != this.state.saved) {
+								console.log("Saved", response.data);
 
-							// After we've done the post... then get the updated history
-							helpers.getSaved().then(function (response) {
-								console.log("Currently Saved", response.data);
-								if (response != this.state.saved) {
-									console.log("Saved", response.data);
-
-									this.setState({
-										saved: response.data
-									});
-								}
-							}.bind(this));
+								this.setState({
+									saved: response.data
+								});
+							}
 						}.bind(this));
+						//}.bind(this)
+						//)
 					}
 				}.bind(this));
 			}
@@ -19828,7 +19826,7 @@
 					React.createElement(
 						'div',
 						{ className: 'col-md-12' },
-						React.createElement(Results, { results: this.state.data })
+						React.createElement(Results, { results: this.state.results })
 					),
 					React.createElement(
 						'div',
@@ -19881,13 +19879,13 @@
 		handleClick: function handleClick() {
 
 			console.log("CLICK");
-			console.log(this.state.term);
+			console.log(this.state.term + ' ' + this.state.beginYear + ' ' + this.state.endYear);
 			//console.log(this state.beginYear);
 			//console.log(this.state.endYear);
 			// Set the parent to have the search term
 			this.props.setTerm(this.state.term, this.state.beginYear, this.state.endYear);
 
-			runQuery(term, beginYear, endYear);
+			//runQuery(term, beginYear, endYear)
 		},
 
 		// Here we render the function
@@ -19924,35 +19922,23 @@
 								)
 							),
 							React.createElement(
-								"td",
+								"label",
 								null,
-								React.createElement(
-									"label",
-									null,
-									"Search Term:"
-								),
-								React.createElement("input", { type: "text", className: "form-control text-center", id: "term", onChange: this.handleChange, required: true })
+								"Search Term:"
 							),
+							React.createElement("input", { type: "text", className: "form-control text-center", id: "term", onChange: this.handleChange, required: true }),
 							React.createElement(
-								"td",
+								"label",
 								null,
-								React.createElement(
-									"label",
-									null,
-									"Beginning Year:"
-								),
-								React.createElement("input", { type: "text", className: "form-control text-center", id: "beginYear", required: true })
+								"Beginning Year:"
 							),
+							React.createElement("input", { type: "text", className: "form-control text-center", id: "beginYear", onChange: this.handleChange }),
 							React.createElement(
-								"td",
+								"label",
 								null,
-								React.createElement(
-									"label",
-									null,
-									"Ending Year:"
-								),
-								React.createElement("input", { type: "text", className: "form-control text-center", id: "endYear", required: true })
+								"Ending Year:"
 							),
+							React.createElement("input", { type: "text", className: "form-control text-center", id: "endYear", onChange: this.handleChange }),
 							React.createElement("br", null),
 							React.createElement(
 								"button",
@@ -19985,11 +19971,12 @@
 
 		getInitialState: function getInitialState() {
 			return {
-				//food: 6
+				results: ""
 			};
 		},
 
 		handleClick: function handleClick() {
+
 			this.props.postSaved(this.state.headline);
 		},
 
@@ -20008,7 +19995,29 @@
 						"Top 5 Results"
 					)
 				),
-				React.createElement("div", { className: "panel-body text-center" })
+				React.createElement(
+					"div",
+					{ className: "panel-body text-center" },
+					this.props.results.map(function (results, i) {
+
+						return React.createElement(
+							"p",
+							{ key: i },
+							results.main.headline,
+							"> ",
+							React.createElement(
+								"form",
+								{ className: "form-control", method: "post", action: "/api/saved" },
+								" ",
+								React.createElement(
+									"button",
+									{ onClick: this.handleClick },
+									"Save"
+								)
+							)
+						);
+					})
+				)
 			);
 		}
 	});
@@ -20031,11 +20040,14 @@
 
 
 		getInitialState: function getInitialState() {
-			return {};
+			return {
+				saved: []
+			};
 		},
 
 		handleClick: function handleClick() {
-			this.props.deleteSaved(this.state.headline);
+			helpers.deleteSaved(this.state.headline);
+			//this.props.deleteSaved(this.state.headline);
 		},
 
 		// Here we render the function
@@ -20053,7 +20065,23 @@
 						"Saved Articles"
 					)
 				),
-				React.createElement("div", { className: "panel-body text-center" })
+				React.createElement(
+					"div",
+					{ className: "panel-body text-center" },
+					this.props.saved.map(function (search, i) {
+						return React.createElement(
+							"p",
+							{ key: i },
+							search.title,
+							" ",
+							React.createElement(
+								"button",
+								{ onClick: this.handleClick },
+								"Remove"
+							)
+						);
+					})
+				)
 			);
 		}
 	});
@@ -20106,7 +20134,7 @@
 
 			return axios.get(queryURL).then(function (response) {
 
-				console.log(response.data.response.docs);
+				//console.log(response.data.response.docs);
 				return response.data.response.docs;
 			});
 		},
@@ -20124,7 +20152,10 @@
 		// This function posts new searches to our database.
 		postSaved: function postSaved(headline) {
 
-			return axios.post('/api/saved', { headline: headline }).then(function (results) {
+			return axios.post('/api/saved', {
+				headline: main.headline,
+				url: web_url
+			}).then(function (results) {
 
 				console.log("Posted to MongoDB");
 				return results;
@@ -20135,7 +20166,7 @@
 
 			return axios.delete('/api/saved', { headline: headline }).then(function (results) {
 
-				console.log("Posted to MongoDB");
+				console.log("Deleted from  MongoDB");
 				return results;
 			});
 		}

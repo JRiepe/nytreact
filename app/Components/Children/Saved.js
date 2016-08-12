@@ -6,12 +6,13 @@ var Saved = React.createClass({
 
 	getInitialState: function(){
 		return {
-			
+			saved: []
 		}
 	},
 
 	handleClick: function(){
-		this.props.deleteSaved(this.state.headline);
+		helpers.deleteSaved(this.state.headline);
+		//this.props.deleteSaved(this.state.headline);
 	},
 	// Here we render the function
 	render: function(){
@@ -25,11 +26,11 @@ var Saved = React.createClass({
 				<div className="panel-body text-center">
 
 					{/* Here we use a map function to loop through an array in JSX*/}
-					 {/*this.props.saved.map(function(search, i)
+					 {this.props.saved.map(function(search, i)
 						{
-							return <tr><td key={i}>{search.headline}</td><td><button onClick={this.handleClick}>Remove</button></td></tr> 
+							return <p key={i}>{search.title} <button onClick={this.handleClick}>Remove</button></p> 
 						}
-					)*/}
+					)}
 				</div>
 			</div>
 

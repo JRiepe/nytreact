@@ -29,13 +29,14 @@ var Search = React.createClass({
 	handleClick: function(){
 
 		console.log("CLICK");
-		console.log(this.state.term);
+		console.log(this.state.term + ' ' + this.state.beginYear + ' ' +this.state.endYear);
 		//console.log(this state.beginYear);
 		//console.log(this.state.endYear);
 		// Set the parent to have the search term
 		this.props.setTerm(this.state.term, this.state.beginYear, this.state.endYear);
+
 		
-		runQuery(term, beginYear, endYear)
+		//runQuery(term, beginYear, endYear)
 	},
 
 	// Here we render the function
@@ -57,15 +58,15 @@ var Search = React.createClass({
 									Also note how each has an onChange event associated with our handleChange event. 
 								*/}
 								
-								<td><label>Search Term:</label>
-									<input type="text" className="form-control text-center" id="term" onChange= {this.handleChange} required/>
-								</td>
-								<td><label>Beginning Year:</label>
-									<input type="text" className="form-control text-center" id="beginYear" required/>
-								</td>
-								<td><label>Ending Year:</label>
-									<input type="text" className="form-control text-center" id="endYear" required/>
-								</td>
+										<label>Search Term:</label>
+											<input type="text" className="form-control text-center" id="term"  onChange= {this.handleChange} required/>
+										
+										<label>Beginning Year:</label>
+											<input type="text" className="form-control text-center" id="beginYear" onChange= {this.handleChange} />
+										
+										<label>Ending Year:</label>
+											<input type="text" className="form-control text-center" id="endYear" onChange= {this.handleChange} />
+								
 								
 								<br />
 								<button type="button" className="btn btn-primary" onClick={this.handleClick}>Submit</button>

@@ -40,7 +40,7 @@ var helpers = {
 			return axios.get(queryURL)
 			.then(function(response){
 
-				console.log(response.data.response.docs);
+				//console.log(response.data.response.docs);
 				return response.data.response.docs;
 		})
 
@@ -60,7 +60,10 @@ var helpers = {
 	// This function posts new searches to our database.
 	postSaved: function(headline){
 
-		return axios.post('/api/saved', {headline: headline})
+		return axios.post('/api/saved', {
+			headline: main.headline,
+			url: web_url,
+		})
 			.then(function(results){
 
 				console.log("Posted to MongoDB");
@@ -73,7 +76,7 @@ var helpers = {
 		return axios.delete('/api/saved', {headline: headline})
 			.then(function(results){
 
-				console.log("Posted to MongoDB");
+				console.log("Deleted from  MongoDB");
 				return(results);
 			})
 	}

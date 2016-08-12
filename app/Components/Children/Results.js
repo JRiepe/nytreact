@@ -6,11 +6,12 @@ var Results = React.createClass({
 
 	getInitialState: function(){
 		return {
-			//food: 6
+			results: ""
 		}
 	},
 
 	handleClick: function(){
+		
 		this.props.postSaved(this.state.headline);
 	},
 
@@ -28,11 +29,12 @@ var Results = React.createClass({
 
 					
 					{/* Here we use a map function to loop through an array in JSX*/}
-					{/*this.props.results.map(function(search, i)
+					{this.props.results.map(function(results, i)
 						{
-							return <tr><td key={i}>{search.headline}</td><td><button onClick={this.handleClick}>Save</button></td></tr> 
+							
+							 return <p key={i}>{results.main.headline}> <form className="form-control" method="post" action="/api/saved"> <button onClick={this.handleClick}>Save</button></form></p>
 						}
-					)*/}
+					)}
 					
 
 				</div>

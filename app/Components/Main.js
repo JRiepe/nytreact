@@ -16,19 +16,23 @@ var Main = React.createClass({
 	getInitialState: function(){
 		return {
 			searchTerm: "",
+			beginYear: "",
+			endYear: "",
 			results: "",
 			saved: [] /*Note how we added in this history state variable*/
 		}
 	},	
 
 	// This function allows childrens to update the parent.
-	setTerm: function(term){
+	setTerm: function(term, b_year, e_year){
 		this.setState({
 			searchTerm: term,
-			beginYear: beginYear,
-			endYear: endYear
+			beginYear: b_year,
+			endYear: e_year
 		})
 	},
+
+
 
 	// If the component changes (i.e. if a search is entered)... 
 	componentDidUpdate: function(prevProps, prevState){
@@ -36,8 +40,8 @@ var Main = React.createClass({
 		if(prevState.searchTerm != this.state.searchTerm){
 			console.log("UPDATED");
 
-			// Run the query for the address
-			helpers.runQuery(this.state.searchTerm)
+			// Run the query from NY Times
+			helpers.runQuery(this.state.searchTerm, this.state.beginYear, this.state.endYear)
 				.then(function(data){
 					if (data != this.state.results)
 					{
@@ -47,25 +51,21 @@ var Main = React.createClass({
 							results: data
 						})
 
-						// After we've received the result... then post the search term to our history. 
-						helpers.postSaved(this.state.searchTerm)
-							.then(function(data){
-								console.log("Updated!");
+						
+								
+							helpers.getSaved()
+								.then(function(response){
+									console.log("Currently Saved", response.data);
+									if (response != this.state.saved){
+										console.log ("Saved", response.data);
 
-								// After we've done the post... then get the updated history
-								helpers.getSaved()
-									.then(function(response){
-										console.log("Currently Saved", response.data);
-										if (response != this.state.saved){
-											console.log ("Saved", response.data);
-
-											this.setState({
-												saved: response.data
-											})
-										}
-									}.bind(this))	
-							}.bind(this)
-						)
+										this.setState({
+											saved: response.data
+										})
+									}
+								}.bind(this))	
+							//}.bind(this)
+						//)
 					}
 				}.bind(this))
 				
@@ -110,7 +110,7 @@ var Main = React.createClass({
 
 					<div className="col-md-12">
 				
-						<Results results={this.state.data} />
+						<Results results={this.state.results} />
 
 					</div>
 

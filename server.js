@@ -61,7 +61,7 @@ app.post('/api/saved', function(req, res){
 
   // Here we'll save the location based on the JSON input. 
   // We'll use Date.now() to always get the current date time
-  db.articles.insert({"headline": req.body.headline, "date": Date.now()}, function(err){
+  db.articles.insert({"title": this.main.headline, "date": this.pub_date, url: this.web_url}, function(err){
     if(err){
       console.log(err);
     }
@@ -76,7 +76,7 @@ app.delete('/api/saved', function(req, res){
 
   // Here we'll save the location based on the JSON input. 
   // We'll use Date.now() to always get the current date time
-  db.articles.remove({"headline": req.body.headline, function(err){
+  db.articles.remove({"title": this.main.headline, function(err){
     if(err){
       console.log(err);
     }
