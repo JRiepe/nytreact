@@ -19730,7 +19730,7 @@
 				searchTerm: "",
 				beginYear: "",
 				endYear: "",
-				results: "",
+				results: [],
 				saved: [] /*Note how we added in this history state variable*/
 			};
 		},
@@ -19753,7 +19753,7 @@
 				// Run the query from NY Times
 				helpers.runQuery(this.state.searchTerm, this.state.beginYear, this.state.endYear).then(function (data) {
 					if (data != this.state.results) {
-						console.log("Headline", data);
+						console.log(data);
 
 						this.setState({
 							results: data
@@ -19959,60 +19959,58 @@
 /* 161 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	// Include React 
 	var React = __webpack_require__(1);
 
 	// This is the results component
 	var Results = React.createClass({
-		displayName: "Results",
+		displayName: 'Results',
 
 
 		getInitialState: function getInitialState() {
 			return {
-				results: ""
+				results: []
 			};
 		},
 
 		handleClick: function handleClick() {
-
-			this.props.postSaved(this.state.headline);
+			console.log('handleclick results: ' + this.state.headline.main);
+			this.props.postSaved(this.state.headline.main);
 		},
 
 		// Here we render the function
 		render: function render() {
 
 			return React.createElement(
-				"div",
-				{ className: "panel panel-default" },
+				'div',
+				{ className: 'panel panel-default' },
 				React.createElement(
-					"div",
-					{ className: "panel-heading" },
+					'div',
+					{ className: 'panel-heading' },
 					React.createElement(
-						"h3",
-						{ className: "panel-title text-center" },
-						"Top 5 Results"
+						'h3',
+						{ className: 'panel-title text-center' },
+						'Top 5 Results'
 					)
 				),
 				React.createElement(
-					"div",
-					{ className: "panel-body text-center" },
-					this.props.results.map(function (results, i) {
-
-						return React.createElement(
-							"p",
-							{ key: i },
-							results.main.headline,
-							"> ",
+					'div',
+					{ className: 'panel-body text-center' },
+					this.props.results.map(function (result, i) {
+						React.createElement(
+							'ul',
+							null,
 							React.createElement(
-								"form",
-								{ className: "form-control", method: "post", action: "/api/saved" },
-								" ",
+								'li',
+								{ key: i },
+								result.headline.main,
+								' - ',
 								React.createElement(
-									"button",
+									'button',
 									{ onClick: this.handleClick },
-									"Save"
+									'Save'
 								)
 							)
 						);
@@ -20046,7 +20044,7 @@
 		},
 
 		handleClick: function handleClick() {
-			helpers.deleteSaved(this.state.headline);
+			app.deleteSaved(this.state.headline);
 			//this.props.deleteSaved(this.state.headline);
 		},
 
@@ -20153,8 +20151,9 @@
 		postSaved: function postSaved(headline) {
 
 			return axios.post('/api/saved', {
-				headline: main.headline,
-				url: web_url
+				title: this.main.headline,
+				date: this.pub_date,
+				url: this.web_url
 			}).then(function (results) {
 
 				console.log("Posted to MongoDB");
@@ -20164,7 +20163,7 @@
 
 		deleteSaved: function deleteSaved(headline) {
 
-			return axios.delete('/api/saved', { headline: headline }).then(function (results) {
+			return axios.delete('/api/saved', { title: this.title }).then(function (results) {
 
 				console.log("Deleted from  MongoDB");
 				return results;

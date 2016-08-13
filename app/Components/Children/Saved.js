@@ -11,7 +11,7 @@ var Saved = React.createClass({
 	},
 
 	handleClick: function(){
-		helpers.deleteSaved(this.state.headline);
+		app.deleteSaved(this.state.headline);
 		//this.props.deleteSaved(this.state.headline);
 	},
 	// Here we render the function

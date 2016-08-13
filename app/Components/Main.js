@@ -18,7 +18,7 @@ var Main = React.createClass({
 			searchTerm: "",
 			beginYear: "",
 			endYear: "",
-			results: "",
+			results: [],
 			saved: [] /*Note how we added in this history state variable*/
 		}
 	},	
@@ -45,14 +45,12 @@ var Main = React.createClass({
 				.then(function(data){
 					if (data != this.state.results)
 					{
-						console.log("Headline", data);
+						console.log(data);
 
 						this.setState({
 							results: data
 						})
-
-						
-								
+	
 							helpers.getSaved()
 								.then(function(response){
 									console.log("Currently Saved", response.data);

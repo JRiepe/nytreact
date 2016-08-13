@@ -61,8 +61,9 @@ var helpers = {
 	postSaved: function(headline){
 
 		return axios.post('/api/saved', {
-			headline: main.headline,
-			url: web_url,
+			title: this.main.headline,
+			date: this.pub_date, 
+			url: this.web_url,
 		})
 			.then(function(results){
 
@@ -73,7 +74,7 @@ var helpers = {
 
 	deleteSaved: function(headline){
 
-		return axios.delete('/api/saved', {headline: headline})
+		return axios.delete('/api/saved', {title: this.title})
 			.then(function(results){
 
 				console.log("Deleted from  MongoDB");
