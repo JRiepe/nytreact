@@ -5,7 +5,7 @@ var axios = require('axios');
 ///////////////////////////////////////////////////////////////////////
 // NYT information
 
-var authKey = "b865d6e6c727411ea54bb427804c92f9"
+
 
 // Search Parameters Set variables to store your queryTerm, Number of results, Start year and End Year
 
@@ -14,9 +14,10 @@ var helpers = {
 
 	// This function serves our purpose of running the query to geolocate. 
 	runQuery: function(searchTerm, beginYear, endYear){
-
+			var results = [];
 			console.log(searchTerm, beginYear, endYear);
-
+			
+			var authKey = "b865d6e6c727411ea54bb427804c92f9";
 			// Query NY Times
 			var queryURL = "http://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=" + authKey + "&q=" + searchTerm + "&limit=5";
 			if (parseInt(beginYear)) {
@@ -36,12 +37,18 @@ var helpers = {
 				// Add the date information to the newly created URL variable
 				queryURL = queryURL + "&end_date=" + endYear;
 			} // end if
-
+			console.log('queryURL: ' + queryURL)
 			return axios.get(queryURL)
 			.then(function(response){
-
-				//console.log(response.data.response.docs);
-				return response.data.response.docs;
+				
+				for(var i=0; i < 5; i++){
+					results.push({"title": response.data.response.docs[i].headline.main,
+							  "date": response.data.response.docs[i].pub_date, 
+							  "url": response.data.response.docs[i].web_url});
+				}
+				console.log('results[0]: ' + results[0].title)
+				//return results;
+				return (results);
 		})
 
 	},
@@ -53,17 +60,17 @@ var helpers = {
 			.then(function(response){
 
 				console.log(response);
-				return response;
+				return (response);
 			});
 	},
 
 	// This function posts new searches to our database.
-	postSaved: function(headline){
+	postSaved: function(theTitle, theDate, theUrl){
 
 		return axios.post('/api/saved', {
-			title: this.main.headline,
-			date: this.pub_date, 
-			url: this.web_url,
+			title: theTitle /*main.headline*/,
+			date: theDate, 
+			url: theUrl,
 		})
 			.then(function(results){
 
@@ -72,9 +79,9 @@ var helpers = {
 			})
 	},
 
-	deleteSaved: function(headline){
+	deleteSaved: function(theTitle){
 
-		return axios.delete('/api/saved', {title: this.title})
+		return axios.delete('/api/saved', {title: theTitle})
 			.then(function(results){
 
 				console.log("Deleted from  MongoDB");

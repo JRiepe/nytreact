@@ -1,6 +1,6 @@
 // Include React 
 var React = require('react');
-
+var helpers = require('../utils/helpers.js');
 // This is the form component. 
 var Search = React.createClass({
 

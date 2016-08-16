@@ -1,6 +1,6 @@
 // Include React 
 var React = require('react');
-
+var helpers = require('../utils/helpers.js');
 // This is the history component. It will be used to show a log of  recent searches.
 var Saved = React.createClass({
 

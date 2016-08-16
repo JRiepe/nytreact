@@ -45,10 +45,11 @@ var Main = React.createClass({
 				.then(function(data){
 					if (data != this.state.results)
 					{
-						console.log(data);
+						console.log('data: ' + data);
 
 						this.setState({
 							results: data
+
 						})
 	
 							helpers.getSaved()

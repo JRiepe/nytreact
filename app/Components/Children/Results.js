@@ -1,6 +1,6 @@
 // Include React 
 var React = require('react');
-
+var helpers = require('../utils/helpers.js');
 // This is the results component
 var Results = React.createClass({
 
@@ -11,8 +11,8 @@ var Results = React.createClass({
 	},
 
 	handleClick: function(){
-		console.log('handleclick results: ' + this.state.headline.main)
-		this.props.postSaved(this.state.headline.main);
+		console.log('handleclick title results: ' + this.state.results.title)
+		helpers.postSaved(this.state.results);
 	},
 
 
@@ -27,14 +27,15 @@ var Results = React.createClass({
 				</div>
 				<div className="panel-body text-center">
 
-					{/* Here we use a map function to loop through an array in JSX*/}
-					{this.props.results.map(function(result, i)
+					{/* Here we use a map function to loop through an array in JSX  - <button onClick={this.handleClick}>Save</button>*/}
+
+					{this.props.results.forEach(function(results, i) 
 						{
-							<ul>
-							<li key={i}>{result.headline.main} - <button onClick={this.handleClick}>Save</button></li>
-							</ul>
-						}
-					)}
+							
+							<li key={i}> {results.title} ></li>
+							
+						})
+					}
 					
 
 				</div>

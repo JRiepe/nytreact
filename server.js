@@ -59,11 +59,11 @@ app.get('/api/saved', function(req, res) {
 
 // This is the route we will send POST requests to save each search.
 app.post('/api/saved', function(req, res){
-  console.log("BODY: " + req.body.headline);
+  console.log("BODY: " + this.title);
 
   // Here we'll save the location based on the JSON input. 
   // We'll use Date.now() to always get the current date time
-  db.articles.insert({"title": this.main.headline, "date": this.pub_date, url: this.web_url}, function(err){
+  db.articles.insert({"title": this.title, "date": this.pub_date, url: this.web_url}, function(err){
     if(err){
       console.log(err);
     }
@@ -78,7 +78,7 @@ app.delete('/api/saved', function(req, res){
 
   // Here we'll save the location based on the JSON input. 
   // We'll use Date.now() to always get the current date time
-  db.articles.remove({"title": this.main.headline, function(err){
+  db.articles.remove({"title": this.title, function(err){
     if(err){
       console.log(err);
     }
