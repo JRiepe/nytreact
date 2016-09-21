@@ -18,17 +18,17 @@ var Main = React.createClass({
 			searchTerm: "",
 			beginYear: "",
 			endYear: "",
-			results: [],
+			results: "",
 			saved: [] /*Note how we added in this history state variable*/
 		}
 	},	
 
 	// This function allows childrens to update the parent.
-	setTerm: function(term, b_year, e_year){
+	setTerm: function(term, b_Year, e_Year){
 		this.setState({
 			searchTerm: term,
-			beginYear: b_year,
-			endYear: e_year
+			beginYear: b_Year,
+			endYear: e_Year
 		})
 	},
 
@@ -45,30 +45,32 @@ var Main = React.createClass({
 				.then(function(data){
 					if (data != this.state.results)
 					{
-						console.log('data: ' + data);
+						console.log('data23: ' + data);
 
 						this.setState({
 							results: data
-
 						})
-	
-							helpers.getSaved()
-								.then(function(response){
-									console.log("Currently Saved", response.data);
-									if (response != this.state.saved){
-										console.log ("Saved", response.data);
+					} // end if
+				}.bind(this)) // .then(function(data){	
+						
 
-										this.setState({
-											saved: response.data
-										})
-									}
-								}.bind(this))	
-							//}.bind(this)
-						//)
+			helpers.getSaved()
+				.then(function(response){
+					console.log("Currently Saved", response.data);
+					if (response != this.state.saved){
+						console.log ("Saved", response.data);
+
+						this.setState({
+							saved: response.data
+						})
 					}
-				}.bind(this))
+				}.bind(this)) // then(function(response){
+			
+					
 				
-			}
+				
+				
+		} // end if(prevState.searchTerm
 	},
 
 	// The moment the page renders get the History
@@ -117,7 +119,7 @@ var Main = React.createClass({
 
 					<div className="col-md-12">
 
-						<Saved saved={this.state.saved}/> 
+						 <Saved saved={this.state.saved}/>
 
 					</div>
 				</div>

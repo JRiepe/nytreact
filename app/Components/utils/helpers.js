@@ -14,7 +14,7 @@ var helpers = {
 
 	// This function serves our purpose of running the query to geolocate. 
 	runQuery: function(searchTerm, beginYear, endYear){
-			var results = [];
+			//var results = [];
 			console.log(searchTerm, beginYear, endYear);
 			
 			var authKey = "b865d6e6c727411ea54bb427804c92f9";
@@ -38,25 +38,37 @@ var helpers = {
 				queryURL = queryURL + "&end_date=" + endYear;
 			} // end if
 			console.log('queryURL: ' + queryURL)
-			return axios.get(queryURL)
-			.then(function(response){
-				
-				for(var i=0; i < 5; i++){
-					results.push({"title": response.data.response.docs[i].headline.main,
-							  "date": response.data.response.docs[i].pub_date, 
-							  "url": response.data.response.docs[i].web_url});
-				}
-				console.log('results[0]: ' + results[0].title)
-				//return results;
-				return (results);
-		})
+			
+			return new Promise(function(resolve, reject) {
 
+			axios.get(queryURL)
+			.then(function(response){
+				console.log(response);
+				var results =[];
+				for (var i = 0; i < response.data.response.docs.length; i++) {
+					results.push({
+						title: response.data.response.docs[i].headline.main, 
+						pubDate: response.data.response.docs[i].pub_date, 
+						url: response.data.response.docs[i].web_url
+					})
+				}
+					if (results.length != 0) {
+						console.log(results);
+						resolve(results);
+					} else {
+						reject(Error("error"));
+					}
+			});
+
+				
+		})
 	},
+
 
 	// This function hits our own server to retrieve the record of query results
 	getSaved: function(){
 
-		return axios.get('/api/saved')
+		return axios.get('/saved')
 			.then(function(response){
 
 				console.log(response);
@@ -66,11 +78,11 @@ var helpers = {
 
 	// This function posts new searches to our database.
 	postSaved: function(theTitle, theDate, theUrl){
-
-		return axios.post('/api/saved', {
-			title: theTitle /*main.headline*/,
-			date: theDate, 
-			url: theUrl,
+		var article = req.body;
+		return axios.post('/saved', {
+			title: theTitle,
+			pubDate: theDate, 
+			url: theUrl
 		})
 			.then(function(results){
 
@@ -79,9 +91,9 @@ var helpers = {
 			})
 	},
 
-	deleteSaved: function(theTitle){
+	deleteSaved: function(id){
 
-		return axios.delete('/api/saved', {title: theTitle})
+		return axios.delete('/saved', {_id: id})
 			.then(function(results){
 
 				console.log("Deleted from  MongoDB");

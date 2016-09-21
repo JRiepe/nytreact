@@ -1,6 +1,6 @@
 // Include React 
 var React = require('react');
-var helpers = require('../utils/helpers.js');
+//var helpers = require('../utils/helpers.js');
 // This is the form component. 
 var Search = React.createClass({
 
@@ -8,8 +8,8 @@ var Search = React.createClass({
 	getInitialState: function(){
 		return {
 			term: "",
-			beginYear: "",
-			endYear: ""
+			b_Year: "",
+			e_Year: ""
 		}
 	},
 
@@ -29,11 +29,11 @@ var Search = React.createClass({
 	handleClick: function(){
 
 		console.log("CLICK");
-		console.log(this.state.term + ' ' + this.state.beginYear + ' ' +this.state.endYear);
+		console.log(this.state.term + ' ' + this.state.b_Year + ' ' +this.state.e_Year);
 		//console.log(this state.beginYear);
 		//console.log(this.state.endYear);
 		// Set the parent to have the search term
-		this.props.setTerm(this.state.term, this.state.beginYear, this.state.endYear);
+		this.props.setTerm(this.state.term, this.state.b_Year, this.state.e_Year);
 
 		
 		//runQuery(term, beginYear, endYear)
@@ -62,10 +62,10 @@ var Search = React.createClass({
 											<input type="text" className="form-control text-center" id="term"  onChange= {this.handleChange} required/>
 										
 										<label>Beginning Year:</label>
-											<input type="text" className="form-control text-center" id="beginYear" onChange= {this.handleChange} />
+											<input type="text" className="form-control text-center" id="b_Year" onChange= {this.handleChange} />
 										
 										<label>Ending Year:</label>
-											<input type="text" className="form-control text-center" id="endYear" onChange= {this.handleChange} />
+											<input type="text" className="form-control text-center" id="e_Year" onChange= {this.handleChange} />
 								
 								
 								<br />
