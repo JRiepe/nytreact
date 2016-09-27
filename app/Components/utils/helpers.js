@@ -19,7 +19,7 @@ var helpers = {
 			
 			var authKey = "b865d6e6c727411ea54bb427804c92f9";
 			// Query NY Times
-			var queryURL = "http://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=" + authKey + "&q=" + searchTerm + "&limit=5";
+			var queryURL = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=" + authKey + "&q=" + searchTerm + "&limit=5";
 			if (parseInt(beginYear)) {
 
 			// Add the necessary fields
