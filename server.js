@@ -21,9 +21,9 @@ app.use(express.static('./public'));
 
 // MongoDB Configuration configuration (Change this URL to your own DB)
 // var databaseUrl = "mong....."
-MONGODB_URI="mongodb://heroku_51q74xmp:2jo7tq1mdesgs20r65o2035mis@ds153745.mlab.com:53745/heroku_51q74xmp";
 
-var databaseUrl = process.env.MONGODB_URI || "mongodb://heroku_51q74xmp:2jo7tq1mdesgs20r65o2035mis@ds153745.mlab.com:53745/heroku_51q74xmp";
+
+var databaseUrl = "mongodb://heroku_51q74xmp:2jo7tq1mdesgs20r65o2035mis@ds153745.mlab.com:53745/heroku_51q74xmp";
 //var databaseUrl = 'nytreact'//'mongodb:
 var collections = ["articles"];
 
@@ -47,7 +47,7 @@ app.get('/', function(req, res){
 app.get('/saved', function(req, res) {
 
   // We will find all the records, sort it in descending order, then limit the records to 5
-  db.articles.find().sort('date', 'desc', function(err, doc){
+  db.articles.find().sort('date', 'descending', function(err, doc){
 
       if(err){
         console.log(err);
@@ -65,9 +65,9 @@ app.post('/saved', function(req, res) {
   // Here we'll save the location based on the JSON input. 
   // We'll use Date.now() to always get the current date time
   var doc = {
-    "title": req.body.title,
-    "date": req.body.pubDate,
-    "url": req.body.url
+    "title": req.body.data-title,
+    "date": req.body.data-date,
+    "url": req.body.data-url
   };
 
   

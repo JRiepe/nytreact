@@ -77,12 +77,12 @@ var helpers = {
 	},
 
 	// This function posts new searches to our database.
-	postSaved: function(theTitle, theDate, theUrl){
-		var article = req.body;
+	postSaved: function(){
+		
 		return axios.post('/saved', {
-			title: theTitle,
-			pubDate: theDate, 
-			url: theUrl
+			title: article.theTitle,
+			pubDate: article.theDate, 
+			url: article.theUrl
 		})
 			.then(function(results){
 

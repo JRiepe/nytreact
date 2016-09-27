@@ -25,6 +25,7 @@ var Results = React.createClass({
 
 	handleClick: function(){
 		this.setState({
+			console.log(event.target.getAttribute('data-title'));
 			article: {
 				title: event.target.getAttribute('data-title'),
 				pubDate: event.target.getAttribute('data-date'),
@@ -44,7 +45,7 @@ var Results = React.createClass({
 
 	// Here we render the function
 	render: function(){
-		var nyt = this.props.results || [];
+		var nyt = this.props.results[];
 		
 		return(
 
@@ -52,7 +53,7 @@ var Results = React.createClass({
 				<div className="panel-heading">
 					<h3 className="panel-title text-center">Top 5 Results</h3>
 				</div>
-				<div className="panel-body text-center" onClick={this.handleClick}>
+				<div className="panel-body text-center">
 					 
 						        {nyt.map(function(article, i) {
 									return <p key={i}><a href={article.url} target="_blank">{article.title } </a> <span> {article.pubDate} </span><button className="btn btn-primary" data-title={article.title} data-index={i} data-date={article.pubDate} data-url={article.url}>Save</button></p>
